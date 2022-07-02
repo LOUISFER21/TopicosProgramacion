@@ -1,39 +1,35 @@
 
 package Unidad4;
 
-import java.sql.*;
 
-public class Conexion
+import java.sql.*;
+public class Conexion 
 {
-    static String bd = "pruebatopicos";
-    static String login = "root";
-    static String password;
-    static String url = "jdbc:mysql://localhost/"+bd;
-    static boolean conectado;
-    static Statement instruccion=null;
-    static ResultSet resultados=null;
-    static int filas=0;
-    static String controlador="com.mysql.jdbc.Driver";
-    static Connection conn;
+    String bd="prueba";
+    String login="root";
+    String url="jdbc:mysql://localhost/"+bd;
+    boolean conectado;
+    Statement instruccion=null;
+    ResultSet resultados=null;
+    int filas=0;
+    String controlador="com.mysql.jdbc.Driver";
+    Connection conn;
     public Conexion()
     {
-        conn = null;
-        try
-        {
+        conn=null;
+        try{
             Class.forName(controlador).newInstance();
-
-            conn = DriverManager.getConnection(url,login,"");
+            conn=DriverManager.getConnection(url,login,"");
             instruccion=conn.createStatement();
-
-            if (conn != null)
+            if(conn!=null)
             {
-                System.out.println("Conexion a base de datos "+url+" ... Ok");
+                System.out.println("Conexion a base de datos"+url+"...OK");
                 conectado=true;
             }
         }
         catch(SQLException ex)
         {
-            System.out.println("Hubo un problema al intentar conectarse con la base de datos "+ex.getMessage());
+            System.out.println("Hubo un problema al intentar conectarse con la base de datos");
             conectado=false;
         }
         catch(ClassNotFoundException ex)
@@ -41,39 +37,40 @@ public class Conexion
             System.out.println(ex);
             conectado=false;
         }
-        catch(Exception m)
-        {
+        catch(Exception m){
             conectado=false;
         }
     }
-    public void altas(String sentencia)throws Exception
-    {
-            instruccion.executeUpdate(sentencia);
+    public void proceso_tabla(String sentencia)throws Exception{
+        //altas, bajas y modificaciones
+        instruccion.executeUpdate(sentencia);
     }
-    public static ResultSet consultar(String sentenciaSQL)
-    {
+    public ResultSet consultar(String sentenciaSQL){
         ResultSet res=null;
-        try
-        {
+        try{
             res=instruccion.executeQuery(sentenciaSQL);
             while(res.next())
-              filas++;
-
-            res=instruccion.executeQuery(sentenciaSQL);
-            return res;
-        }
-        catch(Exception m)
-        {
+                filas++;
+                  
+                res=instruccion.executeQuery(sentenciaSQL);
+                return res;
+            
+        }catch(Exception m){
             System.out.println("Error en la consulta"+m.getMessage());
         }
         return res;
     }
-    public static int obtenerMaximo()
-    {
+    public int obtenerMaximo(){
         return filas;
     }
-    public static void main(String args [])
-    {
+    public void cerrar_con(){
+        try{
+            conn.close();
+        }catch(Exception e){
+            System.out.println("Error al cerrar sesion");
+        }
+    }
+    public static void main(String[] args) {
         Conexion test=new Conexion();
-    }    
+    }
 }
